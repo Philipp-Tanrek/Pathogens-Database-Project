@@ -1,0 +1,33 @@
+/* Custom styles */
+body.bg-dark {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.table-dark {
+    color: #fff;
+    background-color: #343a40;
+}
+
+.table-dark th,
+.table-dark td,
+.table-dark thead th {
+    border-color: #454d55;
+}
+
+.rows-per-page-container {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.rows-per-page-container label {
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.rows-per-page-container select {
+    width: auto;
+    padding: 2px 5px;
+    font-size: 0.9rem;
+}
