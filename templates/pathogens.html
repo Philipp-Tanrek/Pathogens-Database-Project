@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Pathogens{% endblock %}
+
+{% block content %}
+<h1 class="pt-5 pb-2 text-center">Pathogens</h1>
+
+<!-- Search Form -->
+<form method="get" action="/pathogens" class="mb-4">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search Pathogens" aria-label="Search Pathogens">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<p><a href="/" class="btn btn-link">Back to index</a></p>
+
+<!-- Responsive Table -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover" id="dataTable">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>GeneBank ID</th>
+                <th>Organism</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>
+                    <a href="/pathogen/{{ row[0] }}/proteins" class="btn btn-sm btn-outline-info">
+                        View Proteins
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item"><a class="page-link" href="#">&laquo; Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next &raquo;</a></li>
+    </ul>
+</nav>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Proteins{% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    const proteinData = {{ protein_data|tojson }};
+    function drawChart() {
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'Organism');
+        data.addColumn('number', 'Proteins');
+        data.addRows(proteinData);
+
+        const options = {
+            title: 'Proteins per Organism',
+            pieHole: 0.4,
+            backgroundColor: 'transparent',
+            legend: { textStyle: { color: 'black', fontSize: 14 } },
+            titleTextStyle: { color: 'black', fontSize: 16 },
+        };
+
+        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Proteins</h1>
+<div class="row align-items-center mb-4">
+    <div class="col-md-6">
+        <form method="get" action="/proteins">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search Proteins" aria-label="Search Proteins">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div id="piechart" style="width: 100%; height: 200px;"></div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end mb-3">
+    <div class="rows-per-page-container">
+        <label for="rowsPerPage" class="me-2">Rows per page:</label>
+        <select id="rowsPerPage" class="form-control">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover" id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Protein Name</th>
+                <th>UniProt ID</th>
+                <th>Related Organism</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>
+                    <a href="/protein/{{ row[0] }}/domains" class="btn btn-outline-info">View Domains</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item"><a class="page-link" href="?page={{ prev_page }}">Previous</a></li>
+        {% for i in pages %}
+        <li class="page-item {% if i == current_page %}active{% endif %}">
+            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item"><a class="page-link" href="?page={{ next_page }}">Next</a></li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.getElementById('rowsPerPage').addEventListener('change', function () {
+        const rowsPerPage = this.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('rows', rowsPerPage);
+        window.location.href = url.toString();
+    });
+</script>
+{% endblock %}
