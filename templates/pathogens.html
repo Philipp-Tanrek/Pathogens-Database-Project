@@ -17,13 +17,13 @@
 
 <!-- Responsive Table -->
 <div class="table-responsive">
-    <table class="table table-bordered table-striped table-hover" id="dataTable">
+    <table class="table table-bordered table-striped table-hover table-sortable" id="dataTable">
         <thead class="table-light">
             <tr>
-                <th>ID</th>
-                <th>GeneBank ID</th>
-                <th>Organism</th>
-                <th>Actions</th>
+                <th scope="col" data-sort="string">ID</th>
+                <th scope="col" data-sort="string">GeneBank ID</th>
+                <th scope="col" data-sort="string">Organism</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -53,4 +53,31 @@
         <li class="page-item"><a class="page-link" href="#">Next &raquo;</a></li>
     </ul>
 </nav>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Adding Bootstrap-based sorting functionality
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.table-sortable th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => {
+                const table = header.closest('table');
+                const rows = Array.from(table.querySelectorAll('tbody tr'));
+                const index = Array.from(header.parentNode.children).indexOf(header);
+                const ascending = header.classList.toggle('asc');
+
+                rows.sort((rowA, rowB) => {
+                    const cellA = rowA.children[index].textContent.trim();
+                    const cellB = rowB.children[index].textContent.trim();
+
+                    return ascending
+                        ? cellA.localeCompare(cellB, undefined, { numeric: true })
+                        : cellB.localeCompare(cellA, undefined, { numeric: true });
+                });
+
+                rows.forEach(row => table.querySelector('tbody').appendChild(row));
+            });
+        });
+    });
+</script>
 {% endblock %}

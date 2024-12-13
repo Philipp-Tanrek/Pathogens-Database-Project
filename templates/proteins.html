@@ -58,14 +58,14 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-bordered table-hover" id="dataTable">
+    <table class="table table-bordered table-hover table-sortable" id="dataTable">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Protein Name</th>
-                <th>UniProt ID</th>
-                <th>Related Organism</th>
-                <th>Actions</th>
+                <th scope="col" data-sort="string">ID</th>
+                <th scope="col" data-sort="string">Protein Name</th>
+                <th scope="col" data-sort="string">UniProt ID</th>
+                <th scope="col" data-sort="string">Related Organism</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -99,6 +99,29 @@
 
 {% block extra_scripts %}
 <script>
+    // Adding Bootstrap-based sorting functionality
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.table-sortable th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => {
+                const table = header.closest('table');
+                const rows = Array.from(table.querySelectorAll('tbody tr'));
+                const index = Array.from(header.parentNode.children).indexOf(header);
+                const ascending = header.classList.toggle('asc');
+
+                rows.sort((rowA, rowB) => {
+                    const cellA = rowA.children[index].textContent.trim();
+                    const cellB = rowB.children[index].textContent.trim();
+
+                    return ascending
+                        ? cellA.localeCompare(cellB, undefined, { numeric: true })
+                        : cellB.localeCompare(cellA, undefined, { numeric: true });
+                });
+
+                rows.forEach(row => table.querySelector('tbody').appendChild(row));
+            });
+        });
+    });
+
     document.getElementById('rowsPerPage').addEventListener('change', function () {
         const rowsPerPage = this.value;
         const url = new URL(window.location.href);
